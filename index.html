@@ -293,18 +293,12 @@ callDate.value = new Date().toISOString().split("T")[0];
 cfDate.value = new Date().toISOString().split("T")[0];
 
 function loadExpiryJson(){
-  //let stockData = [];
-
+  
 fetch('./data/ExpiryList.json')
   .then(response => response.json())
-  .then(json => {
-    // Access the 'stockData' key from the parsed JSON object
-    //stockData = json.stockData; 
+  .then(json => {    
     expiryList = json.indexExpiry;
-    
-    // Now you can access it as requested
-    //console.log(stockData[0].value); // "BankNifty"
-    //console.log("Symbol - ",stockList[0].value, " Lot Size - ",stockList[0].lotsize); // "BankNifty"
+        
   })
   .catch(error => console.error('Error:', error));
 }
@@ -313,11 +307,7 @@ fetch('./data/ExpiryList.json')
 function loadScriptsJson() {
   /* ---------- Load Stock List ---------- */
   let stockData = [];
-  /*fetch("./data/StockLists.json")
-    .then(r => r.json())
-    .then(d => stockList = d.stockData.map(s => s.value))
-    .catch(() => alert("Failed to load StockLists.json"));
-*/
+  
 fetch("./data/StockLists.json")
   .then(res => res.json())
   .then(data => {
@@ -331,7 +321,6 @@ fetch("./data/StockLists.json")
             })
   .catch(err => console.error("StockList load error", err));
 
-  //console.log(stockList);
   /* ---------- Autocomplete --------- */
   const input = document.getElementById("script");
   const box = document.getElementById("autocompleteBox");
@@ -381,7 +370,7 @@ fetch("./data/StockLists.json")
   });
 
   document.addEventListener("click", e => {
-    //console.log(input.value);
+  
     if (!input.contains(e.target)) {  
         
         /* Dont Update Expiries for Foex Symbols */
@@ -395,8 +384,6 @@ fetch("./data/StockLists.json")
   });
   
 }
-
-//let selName = items[index].innerHTML; if(chkForexSymbol(selName) === false){     ResetInputs(txtName);    } 
 
 function chkIndexSymbol(txtSymbol)
 {
@@ -413,11 +400,9 @@ function chkIndexSymbol(txtSymbol)
                 
         //Blank if any previous values
         expirySelect.innerHTML = "";
-        //strikeInput.value="";
 
         // Set the disabled property
         expirySelect.disabled = true;
-        //strikeInput.disabled = true; 
 
         return true;
     };
@@ -523,19 +508,6 @@ function updateExpiries() {
 
     const selectedSymbol = symbolSelect.value;
     
-    /*const forexValues = ["XAUUSD", "BTCUSD"];*/
-
-    /*For Forex Symbols No Expiry Selection & StrikePrice */
-/*    if(forexValues.includes(selectedSymbol.trim())) {   
-        const shouldDisable = (this.value === 'inactive');
-    
-        // Set the disabled property
-        expirySelect.disabled = shouldDisable;
-        strikeInput.disabled = shouldDisable;
-
-        return;
-    };
-*/
     // Clear previous options
     expirySelect.innerHTML = '<option value="">-- Choose Expiry --</option>';
     
@@ -594,9 +566,6 @@ if(callexpiry === "Invalid Date")
 }
 
 
-//console.log(symbolname, callForm.wklyexpiry.value, callForm.expiry.value);
-//+opttype1, + epx1, +date, +script, +strike
-//console.log(cfDate.value);
 const callObj = {
         id: Date.now(),
         date: callForm.callDate.value,
@@ -613,9 +582,6 @@ const callObj = {
 
     calls.push(callObj);
 
-//sendNewCallToTelegram(callObj);
-//console.log(callObj);
-//render();
 
 /* If Current Symbol is a Forex Symbol then Reset the Inputs to "Enable" */
 if(forexValues.includes(symbolname.trim())){     ResetInputs();    }
@@ -676,7 +642,6 @@ function generateReportShow(trades) {
       }
     });
 
-    //console.log(marketTrades);
 
     if (reportIndianMarket === false) 
     {
@@ -713,7 +678,6 @@ function generateReportShow(trades) {
 
           const suffix = (index + 1 === 1) ? "st" : (index + 1 === 2) ? "nd" : (index + 1 === 3) ? "rd" : "th";
 
-          //reportBody += `<b>${index + 1}${suffix} ${toEmojiNumber(index + 1)} Trade</b><br>`;
           reportBody += `<b>${toEmojiNumber(index + 1)} Trade</b><br>`;
           reportBody += `<b>${trade.tradetype} ${trade.script} ${trade.from} ➝ ${trade.to}</b><br>`;
           reportBody += `📌 <b>Total Pips: ${pips.toFixed(1)}</b><br>`;
@@ -744,20 +708,14 @@ function generateReportShow(trades) {
           let tradeNote = "";
           let prevCallDate = "";
 
-          //console.log(trade);
           const isBuy = trade.tradetype.toLowerCase() === "buy";
-          //const diff = isBuy ? (trade.to - trade.from) : (trade.from - trade.to);
           const diff = trade.to - trade.from;
-          //console.log(trade);
+
           pips = diff ; 
           pnLPoints = diff;
           profit01 = diff * trade.lotSize * totLots; 
 
-          // Filter items For LotSize using "Symbol"
-/*const matches = stockList.filter(item => 
-  item.value.toLowerCase() === "");*/
 
-          //console.log(" Points -",pips, " LotSize - ", trade.lotSize," Profit - ", profit01);
           const entryPrice = trade.from;
 
           if (pnLPoints > entryPrice) {
@@ -772,32 +730,20 @@ function generateReportShow(trades) {
           totalProfit01 += profit01;
           let pnlEmoji = "";
 
-          /*if(pnLPoints>0){ pnlEmoji = " 🤑 "}
-          else{ pnlEmoji =" 😔 "}*/
-
-
-          //First Check Whether the Symbol is Nifty/Sensex & whether its expiry is Weekly if not then select the last Expiry of the Month
-          //i.e. the Radio Button value
           let dtExpiry = "";
           
           if( new Date(trade.expiry).toString()  === "Invalid Date")
             {         dtExpiry = "(" + getRadioValue("expirytype") + ")";
             }
           else {      dtExpiry = formatDateTime(trade.expiry,true);   }
-
-          //console.log(dtExpiry);
-          
+      
           const suffix = (index + 1 === 1) ? "st" : (index + 1 === 2) ? "nd" : (index + 1 === 3) ? "rd" : "th";
-          //console.log(profit01);
-
 
           if (new Date(trade.date).toDateString() != new Date(trade.cfdate).toDateString()) {
               prevCallDate = "call given on (" + formatDateTime(trade.cfdate,true) + ")";
           }
-          //console.log("prevCallDate", prevCallDate, " Date - ",trade.date, " CfDate - ",trade.cfdate);
 
           if(pnLPoints>0){
-            //reportBody += `<b>${index + 1}${suffix} ${toEmojiNumber(index + 1)} Trade</b><br>`;
             reportBody += `➡️<b>${trade.tradetype} ${trade.script} ${dtExpiry} ${trade.strike} ${trade.option} ${prevCallDate} - ${tradeNote}</b><br>`;
             reportBody += `<b>${trade.from} ➝ ${trade.to} = ${pips.toFixed(2)} Plus Points </b>🤑<br>`;
             reportBody += `<b>Total Points: ${pips.toFixed(1)}</b><br>`;
@@ -819,15 +765,6 @@ function generateReportShow(trades) {
     reportBody += `<b>💚💚 Think Hard - Your 1 Day Loss Can Be </b><br>`;
     reportBody += `<b>Our Lifetime Subscription Charges</b> 💚💚`;
           }
-
-      /*reportBody += `➡️➡️ <b>Final Result (Day Summary)</b><br>`;
-      reportBody += `➡️➡️ <b>Total Pips: ${totalPips.toFixed(1)}</b><br>`;
-      reportBody += `💲 <b>Profit for 0.10 Lot: $${totalProfit01.toFixed(2)}</b>💲<br>`;
-      reportBody += `💲 <b>Profit for 1 Lot: $${totalProfit1.toFixed(2)}</b></b><br><br>`;
-
-      reportBody += `🔥🔥<b>Strong Start to December — Consistent Profits!</b></b><br>`;
-      reportBody += `🔗 <b>Join us & grow your account daily!💰🚀</b></b><br>`;*/
-    
 
     return reportBody;
 }
@@ -855,10 +792,7 @@ marketRadios.forEach(radio => {
 
     selectedValue === "FOREX"? reportIndianMarket=false : reportIndianMarket=true ;
 
-    //console.log("Changed Value - ",selectedValue);
     refreshReportModal();
-    // You would call your filtering function here:
-    // filterTrades(selectedValue); 
   });
 });
 
@@ -867,12 +801,10 @@ function refreshReportModal()
 {
   let reportMessage = "";
   reportMessage = generateReportShow(calls);
-  //reportMessage = generateReportCopy(calls); //generateReportShow(calls);
   editableMessage.innerHTML = reportMessage;
 }
 
 function saveEditedMessage() {
-  //copyAndOpenTelegram();
   copyToTelegram();  
 
   const box = document.getElementById("editableMessage");
@@ -884,15 +816,12 @@ async function copyToTelegram() {
     // 1. Get text from the div
     //const message = document.getElementById('editableMessage').innerText;
     const message = getTelegramSafeMessage();
-
-    //const message = generateReportCopy(calls);
-    //console.log(message);
+    
     // 2. Comprehensive Copy Function (Works on HTTP & HTTPS)
     if (navigator.clipboard && window.isSecureContext) {
         // Modern approach for HTTPS/localhost
         await navigator.clipboard.writeText(message);
     } else {
-        // Fallback approach for HTTP
         const textArea = document.createElement("textarea");
         textArea.value = message;
         
@@ -913,11 +842,6 @@ async function copyToTelegram() {
         
         document.body.removeChild(textArea);
     }
-
-    // 3. Open Telegram Share Link (Handles emojis via encodeURIComponent)
-    //const encodedMessage = encodeURIComponent(message);
-    //const telegramUrl = `t.me{encodedMessage}`;
-    //window.open(telegramUrl, '_blank');
 }
 
 function getTelegramSafeMessage() {
