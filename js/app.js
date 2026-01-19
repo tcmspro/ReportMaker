@@ -472,7 +472,7 @@ function generateReportShow(trades) {
 
 
     reportBody += `<b>Amazing Accuracy & Amazing Jackpot Profits By Premium Members</b> 🤑🤑<br><br>`;
-    reportBody += `<b>Nearly All Trades <br>Perfect Selection Of Entry Levels - </b><br><b>Perfect Movement Caught - </b><br><b>Perfect Target 🎯 🎯 Achieved 😎😎</b><br><br>`;
+    reportBody += `<b>Nearly All Trades</b> <br><b>Perfect Selection Of Entry Levels - </b><br><b>Perfect Movement Caught - </b><br><b>Perfect Target 🎯 🎯 Achieved 😎😎</b><br><br>`;
     reportBody += `<b>Don't Miss To Join Stock Market School (sms) Premium Channel For Consistent Profits. 💲💲</b><br><br>`;
     reportBody += `<b>Link To Join Our Premium Subscription Is Pinned </b><br>`;
     reportBody += `<b>@ Top In This Channel </b><br><br>`;
