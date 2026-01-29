@@ -289,12 +289,14 @@ const callObj = {
         expiry: callexpiry,
         strike: callForm.strike.value,
         option: callForm.optiontype.value,
-        from: f,      to: t,     
+        from: f,      
+        to: t,     
         lotSize: lsz,
         tg_msgid: null   // Telegram message id of NEW CALL
     };
 
     calls.push(callObj);
+
 
 
 /* If Current Symbol is a Forex Symbol then Reset the Inputs to "Enable" */
@@ -362,10 +364,11 @@ function generateReportShow(trades) {
       reportBody = `<b>Trades Summary - ${HeadingDateFormat(new Date())}</b><br><br>`;
 
       marketTrades.forEach((trade, index) => {
+
           let pips = 0;
           let profit01 = 0;
           let profit1 = 0;
-          //console.log(trade);
+          
           const isBuy = trade.tradetype.toLowerCase() === "buy";
           const diff = isBuy ? (trade.to - trade.from) : (trade.from - trade.to);
 
@@ -392,20 +395,20 @@ function generateReportShow(trades) {
 
           const suffix = (index + 1 === 1) ? "st" : (index + 1 === 2) ? "nd" : (index + 1 === 3) ? "rd" : "th";
 
-          reportBody += `<b>${toEmojiNumber(index + 1)} Trade</b><br>`;
-          reportBody += `<b>${trade.tradetype} ${trade.script} ${trade.from} ➝ ${trade.to}</b><br>`;
-          reportBody += `📌 <b>Total Pips: ${pips.toFixed(1)}</b><br>`;
-          reportBody += `💵 <b>Profit(0.10 Lot): $${profit01.toFixed(2)} 💵</b><br>`;
-          reportBody += `💰 <b>Profit(1 Lot): $${profit1.toFixed(2)} 💵<br></b><br>`;
+          reportBody += ` <b>${toEmojiNumber(index + 1)} Trade</b><br>`;
+          reportBody += ` <b>${trade.tradetype} ${trade.script} ${trade.from} ➝ ${trade.to}</b><br>`;
+          /*reportBody += `📌 <b>Total Pips: ${pips}</b><br>`;*/
+          reportBody += `💵 <b>Profit(0.10 Lot): $${profit01} 💵</b><br>`;
+          reportBody += `💰 <b>Profit(1 Lot): $${profit1} 💵<br></b><br>`;
       });
 
 
       reportBody += `➡️➡️ <b>Final Result (Day Summary)</b><br>`;
-      reportBody += `➡️➡️ <b>Total Pips: ${totalPips.toFixed(1)}</b><br>`;
-      reportBody += `💲 <b>Profit for 0.10 Lot: $${totalProfit01.toFixed(2)}</b>💲<br>`;
-      reportBody += `💲 <b>Profit for 1 Lot: $${totalProfit1.toFixed(2)}</b></b><br><br>`;
+      reportBody += `➡️➡️ <b>Total Pips: ${totalPips}</b><br>`;
+      reportBody += `💲 <b>Profit for 0.10 Lot: $${totalProfit01}</b>💲<br>`;
+      reportBody += `💲 <b>Profit for 1 Lot: $${totalProfit1}</b></b><br><br>`;
 
-      reportBody += `🔥🔥<b>Strong Start to December — Consistent Profits!</b><br>`;
+      reportBody += `🔥🔥 <b>Strong Start to December — Consistent Profits!</b><br>`;
       reportBody += `🔗 <b>Join us & grow your account daily!💰🚀</b><br>`;
 
     }
@@ -414,6 +417,7 @@ function generateReportShow(trades) {
       reportBody += `<b>Trade Summary</b> 👇👇👇👇👇<br><br>`;
       
       marketTrades.forEach((trade, index) => {
+
           let pips = 0;
           let pnLPoints = 0;
           let profit01 = 0;
@@ -423,7 +427,9 @@ function generateReportShow(trades) {
           let prevCallDate = "";
 
           const isBuy = trade.tradetype.toLowerCase() === "buy";
-          const diff = trade.to - trade.from;
+          const fromRate = trade.from;
+          const toRate = trade.to;
+          const diff = toRate - fromRate;
 
           pips = diff ; 
           pnLPoints = diff;
@@ -432,13 +438,57 @@ function generateReportShow(trades) {
 
           const entryPrice = trade.from;
 
-          if (pnLPoints > entryPrice) {
+          /*if (pnLPoints > entryPrice) {
               tradeNote = "💥💥 Price Doubled N More 💥💥"; // Case: 15 points profit on 10 entry
           } else if (pnLPoints === entryPrice) {
               tradeNote = "💥 Price Doubled 💥";        // Case: 10 points profit on 10 entry
           } else if (pnLPoints >= entryPrice * 0.9) {
               tradeNote = "Price Nearly Doubled"; // Case: 9 points (90%) profit on 10 entry
+          }*/
+
+          //const numTimes = formatRateIncrease(entryPrice,pnLPoints);
+          const numTimes = formatRateIncrease(fromRate,toRate);
+          
+
+          let wholeNum = Math.trunc(parseFloat(toRate/fromRate)); // For positive numbers, Math.floor() also works.
+          let decNum = ((toRate/fromRate) - wholeNum).toFixed(2);
+
+          //console.log("Entry - ",fromRate, " PnL - ",toRate," Diff - ", (toRate-fromRate)," Multiplier - ",numTimes.noofTimes," String - ",numTimes.timesString);
+          //console.log(wholeNum, decNum);
+
+          if(numTimes.noofTimes === 2){
+            //console.log("I am Called");
+            tradeNote = "💥💥 Doubled 💥💥"; // Case: 15 points profit on 10 entry
           }
+          else if(numTimes.noofTimes === 3){
+            tradeNote = "💥💥 Tripled 💥💥";        // Case: 10 points profit on 30 entry
+          }
+          else if(numTimes.noofTimes >3){
+            tradeNote = `💥💥 ${numTimes.timesString} 💥💥`;        // Case: 10 points profit on 10 entry
+          }
+          else {
+            if (toRate >= fromRate * 0.9){
+              tradeNote = "💥💥 Nearly Doubled 💥💥"; // Case: 9 points (90%) profit on 10 entry
+            }
+          }
+
+          /*if (pnLPoints >= entryPrice * 0.9 && pnLPoints < (entryPrice + entryPrice) ) {
+              tradeNote = "Price Nearly Doubled"; // Case: 9 points (90%) profit on 10 entry
+          }
+          else{
+            if (numTimes.noofTimes === 1) {
+              tradeNote = "💥💥 Price Doubled 💥💥";        // Case: 10 points profit on 10 entry
+            }
+            else if (numTimes.noofTimes === 2) {
+              tradeNote = "💥💥 Price Tripled 💥💥";        // Case: 10 points profit on 30 entry
+            }
+            else if (numTimes.noofTimes >= 3) {
+              tradeNote = `💥💥 ${numTimes.timesString} 💥💥`;        // Case: 10 points profit on 10 entry
+            }
+          }*/
+
+
+
 
           totalPips += pips;
           totalProfit01 += profit01;
@@ -457,23 +507,24 @@ function generateReportShow(trades) {
               prevCallDate = "call given on (" + formatDateTime(trade.cfdate,true) + ")";
           }
 
+          //console.log(tradeNote);
           if(pnLPoints>0){
-            reportBody += `➡️<b>${trade.tradetype} ${trade.script} ${dtExpiry} ${trade.strike} ${trade.option} ${prevCallDate} - ${tradeNote}</b><br>`;
-            reportBody += `<b>${trade.from} ➝ ${trade.to} = ${pips.toFixed(2)} Plus Points </b>🤑<br>`;
-            reportBody += `<b>Total Points: ${pips.toFixed(1)}</b><br>`;
-            reportBody += `<b>Maximum Profits: Rs. ${profit01.toFixed(2)}/- For 2 Lots  ➕➕</b><br><br>`;
+            reportBody += `➡️ <b>${trade.tradetype} ${trade.script} ${dtExpiry} ${trade.strike} ${trade.option} ${prevCallDate} ${tradeNote}</b><br>`;
+            reportBody += `<b>${trade.from} ➝ ${trade.to} = ${pips} Plus Points </b>🤑<br>`;
+            /*reportBody += `<b>Total Points: ${pips}</b><br>`;*/
+            reportBody += `<b>Maximum Profits: ${profit01}/- For 2 Lots  ➕➕</b><br><br>`;
           }
           else{
-            reportBody += `➡️<b>${trade.tradetype} ${trade.script} ${dtExpiry} ${trade.strike} ${trade.option} - <br>`;
-            reportBody += `${trade.from} ➝ ${trade.to} = ${pips.toFixed(2)} Points Loss</b>😔<br><br>`;
+            reportBody += `➡️ <b>${trade.tradetype} ${trade.script} ${dtExpiry} ${trade.strike} ${trade.option}</b><br>`;
+            reportBody += `<b>${trade.from} ➝ ${trade.to} = ${pips} Points Loss</b>😔<br><br>`;
           }
   
       });
 
 
-    reportBody += `<b>Amazing Accuracy & Amazing Jackpot Profits By Premium Members</b> 🤑🤑<br><br>`;
+    reportBody += `<b>Amazing Accuracy and Amazing Jackpot Profits By Premium Members</b> 🤑🤑<br><br>`;
     reportBody += `<b>Nearly All Trades</b> <br><b>Perfect Selection Of Entry Levels - </b><br><b>Perfect Movement Caught - </b><br><b>Perfect Target 🎯 🎯 Achieved 😎😎</b><br><br>`;
-    reportBody += `<b>Don't Miss To Join Stock Market School (sms) Premium Channel For Consistent Profits. 💲💲</b><br><br>`;
+    reportBody += `<b>Don't Miss To Join Stock Market School (SMS) Premium Channel For Consistent Profits. 💲💲</b><br><br>`;
     reportBody += `<b>Link To Join Our Premium Subscription Is Pinned </b><br>`;
     reportBody += `<b>@ Top In This Channel </b><br><br>`;
     reportBody += `<b>💚💚 Think Hard - Your 1 Day Loss Can Be </b><br>`;
@@ -482,6 +533,55 @@ function generateReportShow(trades) {
 
     return reportBody;
 }
+
+/**
+ * Formats a rate increase into a string representation.
+ * @param {number} fromRate - The starting rate.
+ * @param {number} toRate - The ending rate.
+ * @returns {string} - e.g., "Four Times (4x)"
+ */
+function formatRateIncrease(fromRate, toRate) {
+    if (fromRate === 0) return "Cannot divide by zero";
+
+    // Calculate multiplier and drop decimals (3.9x becomes 3x)
+    const multiplier = Math.floor(toRate / fromRate);
+
+    // Convert the integer to words (e.g., 4 to "Four")
+    const word = numberToWords(multiplier);
+
+    // Capitalize the first letter of the word
+    const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
+
+    //return `${capitalizedWord} Times (${multiplier}x)`;
+    return {
+    timesString: `${capitalizedWord} Times (${multiplier}x)`,
+    noofTimes: multiplier
+  };
+}
+
+/**
+ * Basic helper to convert a number to English words (for integers up to 999).
+ */
+function numberToWords(num) {
+    if (num === 0) return "zero";
+
+    const units = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", 
+                   "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+    const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+
+    if (num < 20) return units[num];
+    
+    if (num < 100) {
+        return tens[Math.floor(num / 10)] + (num % 10 !== 0 ? " " + units[num % 10] : "");
+    }
+
+    if (num < 1000) {
+        return units[Math.floor(num / 100)] + " hundred" + (num % 100 !== 0 ? " " + numberToWords(num % 100) : "");
+    }
+
+    return num.toString(); // Fallback for extremely large numbers
+}
+
 
 function getRadioValue(name) {
   return document.querySelector(`input[name="${name}"]:checked`)?.value || "";
