@@ -512,7 +512,7 @@ function generateReportShow(trades) {
             reportBody += `➡️ <b>${trade.tradetype} ${trade.script} ${dtExpiry} ${trade.strike} ${trade.option} ${prevCallDate} ${tradeNote}</b><br>`;
             reportBody += `<b>${trade.from} ➝ ${trade.to} = ${pips} Plus Points </b>🤑<br>`;
             /*reportBody += `<b>Total Points: ${pips}</b><br>`;*/
-            reportBody += `<b>Maximum Profits: ${profit01}/- For 2 Lots  ➕➕</b><br><br>`;
+            reportBody += `<b>Maximum Profits: ${profit01}/- For 2 Lots ➕➕</b><br><br>`;
           }
           else{
             reportBody += `➡️ <b>${trade.tradetype} ${trade.script} ${dtExpiry} ${trade.strike} ${trade.option}</b><br>`;
