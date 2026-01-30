@@ -467,7 +467,7 @@ function generateReportShow(trades) {
             tradeNote = `💥💥 ${numTimes.timesString} 💥💥`;        // Case: 10 points profit on 10 entry
           }
           else {
-            if (toRate >= fromRate * 0.9){
+            if (toRate >= fromRate+(fromRate*0.90)){              
               tradeNote = "💥💥 Nearly Doubled 💥💥"; // Case: 9 points (90%) profit on 10 entry
             }
           }
